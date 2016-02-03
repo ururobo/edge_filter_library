@@ -20,20 +20,16 @@ void Edge_Filter(cv::Mat& src_img, cv::Mat& dst_img) {
 
 void Filter(cv::Mat& src, cv::Mat& dst, int kernel[3][3]) {
 	int sum = 0;
-	for (int y = 0; y < src.rows; ++y) {
-		if (y != 0 && y != src.rows - 1) {
-			for (int x = 0; x < src.cols; ++x) {
-				for (int c = 0; c < src.channels(); ++c) {
-					if (x != 0 && x != src.cols - 1) {
-						sum = 0;
-						for (int i = -1; i <= 1; ++i) {
-							for (int j = -1; j <= 1; ++j) {
-								sum += static_cast<int>(src.data[(y + i)*src.step + (x + j) * src.elemSize() + c]) * kernel[i + 1][j + 1];
-							}
-						}
-						dst.data[y*dst.step + x * dst.elemSize() + c] = static_cast<uchar>(abs(sum));
+	for (int y = 1; y < src.rows - 1; ++y) {
+		for (int x = 1; x < src.cols - 1; ++x) {
+			for (int c = 0; c < src.channels(); ++c) {
+				sum = 0;
+				for (int i = -1; i <= 1; ++i) {
+					for (int j = -1; j <= 1; ++j) {
+						sum += static_cast<int>(src.data[(y + i)*src.step + (x + j) * src.elemSize() + c]) * kernel[i + 1][j + 1];
 					}
 				}
+				dst.data[y*dst.step + x * dst.elemSize() + c] = static_cast<uchar>(abs(sum));
 			}
 		}
 	}
